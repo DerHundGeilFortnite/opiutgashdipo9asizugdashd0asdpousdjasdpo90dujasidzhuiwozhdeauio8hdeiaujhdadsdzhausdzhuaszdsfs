@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solana Liquidity Manager</title>
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.0/lib/index.iife.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+  <style>
+    body {
+      background: linear-gradient(135deg, #050505, #121212);
+      font-family: 'Orbitron', sans-serif;
+      color: #00eaff;
+      padding: 40px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 234, 255, 0.2);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #00eaff;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      padding: 12px 24px;
+      border: none;
+      background: #00eaff;
+      color: #000;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #ff5e00;
+      color: white;
+    }
+    .panel {
+      display: none;
+    }
+    .panel.active {
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      background: #2d2d2d;
+      color: #fff;
+    }
+    button.action {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      background: #ff5e00;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .note {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Solana Liquidity Manager</h1>
+    <div class="tabs">
+      <button onclick="switchTab('create')" id="tab-create" class="active">Create Pool</button>
+      <button onclick="switchTab('add')" id="tab-add">Add Liquidity</button>
+      <button onclick="switchTab('remove')" id="tab-remove">Remove Liquidity</button>
+    </div>
+
+    <div class="panel active" id="panel-create">
+      <h2>Create Liquidity Pool</h2>
+      <input id="create-base-token" placeholder="Base Token Address (SPL)" />
+      <input id="create-quote-token" placeholder="Quote Token Address (SPL)" />
+      <input id="create-base-amount" placeholder="Base Amount" />
+      <input id="create-quote-amount" placeholder="Quote Amount" />
+      <button class="action" onclick="createPool()">Create Pool</button>
+      <div class="note">Uses Raydium/Orca router. Phantom wallet required.</div>
+    </div>
+
+    <div class="panel" id="panel-add">
+      <h2>Add Liquidity</h2>
+      <input id="add-pool-address" placeholder="Liquidity Pool Address (AMM ID)" />
+      <input id="add-base-amount" placeholder="Base Token Amount" />
+      <input id="add-quote-amount" placeholder="Quote Token Amount" />
+      <button class="action" onclick="addLiquidity()">Add Liquidity</button>
+    </div>
+
+    <div class="panel" id="panel-remove">
+      <h2>Remove Liquidity</h2>
+      <input id="remove-pool-address" placeholder="Liquidity Pool Address (AMM ID)" />
+      <input id="remove-amount" placeholder="LP Token Amount to Withdraw" />
+      <button class="action" onclick="removeLiquidity()">Withdraw</button>
+    </div>
+  </div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.getElementById(`panel-${tab}`).classList.add('active');
+  }
+
+  async function connectWallet() {
+    if (!window.solana || !window.solana.isPhantom) {
+      alert('Please install Phantom wallet');
+      return;
+    }
+    const resp = await window.solana.connect();
+    return resp.publicKey.toString();
+  }
+
+  async function createPool() {
+    const wallet = await connectWallet();
+    const base = document.getElementById('create-base-token').value;
+    const quote = document.getElementById('create-quote-token').value;
+    const baseAmt = document.getElementById('create-base-amount').value;
+    const quoteAmt = document.getElementById('create-quote-amount').value;
+    alert(`Pool creation simulated:\nBase: ${base}\nQuote: ${quote}\nAmounts: ${baseAmt}/${quoteAmt}\nWallet: ${wallet}`);
+    // Real implementation: integrate Raydium SDK or Jupiter API
+  }
+
+  async function addLiquidity() {
+    const pool = document.getElementById('add-pool-address').value;
+    const baseAmt = document.getElementById('add-base-amount').value;
+    const quoteAmt = document.getElementById('add-quote-amount').value;
+    alert(`Adding liquidity to ${pool}: ${baseAmt} base + ${quoteAmt} quote.`);
+  }
+
+  async function removeLiquidity() {
+    const pool = document.getElementById('remove-pool-address').value;
+    const withdrawAmt = document.getElementById('remove-amount').value;
+    alert(`Removing ${withdrawAmt} LP tokens from ${pool}.`);
+  }
+</script>
+</body>
+</html>
